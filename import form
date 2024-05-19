@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Sự Kiện</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 10px;
+        }
+        input, select, textarea {
+            padding: 8px;
+            margin-bottom: 20px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .success-message {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Thêm Sự Kiện</h1>
+    <form id="eventForm">
+        <label for="eventName">Tên sự kiện:</label>
+        <input type="text" id="eventName" name="eventName" required>
+
+        <label for="eventDate">Ngày diễn ra sự kiện:</label>
+        <input type="date" id="eventDate" name="eventDate" required>
+
+        <label for="eventLocation">Địa điểm:</label>
+        <input type="text" id="eventLocation" name="eventLocation" required>
+
+        <label>Quyền lợi:</label>
+        <div class="checkbox-group">
+            <input type="checkbox" id="drPoints" name="benefits" value="Điểm rèn luyện">
+            <label for="drPoints">Điểm rèn luyện</label>
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="certificate" name="benefits" value="Giấy chứng nhận">
+            <label for="certificate">Giấy chứng nhận</label>
+        </div>
+
+        <button type="submit">Thêm sự kiện</button>
+    </form>
+
+    <div class="success-message" id="successMessage">
+        Thêm sự kiện thành công!
+    </div>
+
+    <script>
+        document.getElementById('eventForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = {
+                eventName: document.getElementById('eventName').value,
+                eventDate: document.getElementById('eventDate').value,
+                eventLocation: document.getElementById('eventLocation').value,
+                benefits: []
+            };
+
+            if (document.getElementById('drPoints').checked) {
+                formData.benefits.push(document.getElementById('drPoints').value);
+            }
+
+            if (document.getElementById('certificate').checked) {
+                formData.benefits.push(document.getElementById('certificate').value);
+            }
+
+            fetch('YOUR_GOOGLE_SCRIPT_WEB_APP_URL', {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('successMessage').style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
